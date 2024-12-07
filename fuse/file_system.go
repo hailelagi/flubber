@@ -2,10 +2,12 @@ package fuse
 
 import (
 	"context"
+	"flag"
+	"log"
 	"syscall"
 
-	"github.com/hanwen/go-fuse/fuse"
 	"github.com/hanwen/go-fuse/v2/fs"
+	"github.com/hanwen/go-fuse/v2/fuse"
 )
 
 type HelloRoot struct {
@@ -26,4 +28,22 @@ func (r *HelloRoot) OnAdd(ctx context.Context) {
 func (r *HelloRoot) Getattr(ctx context.Context, fh fs.FileHandle, out *fuse.AttrOut) syscall.Errno {
 	out.Mode = 0755
 	return 0
+}
+
+var _ = (fs.NodeGetattrer)((*HelloRoot)(nil))
+var _ = (fs.NodeOnAdder)((*HelloRoot)(nil))
+
+func Mount() {
+	debug := flag.Bool("debug", false, "print debug data")
+	flag.Parse()
+	if len(flag.Args()) < 1 {
+		log.Fatal("Usage:\n  hello MOUNTPOINT")
+	}
+	opts := &fs.Options{}
+	opts.Debug = *debug
+	server, err := fs.Mount(flag.Arg(0), &HelloRoot{}, opts)
+	if err != nil {
+		log.Fatalf("Mount fail: %v\n", err)
+	}
+	server.Wait()
 }
