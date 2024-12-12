@@ -3,7 +3,6 @@ package fuse
 import (
 	"context"
 	"flag"
-	"log"
 	"syscall"
 
 	"github.com/hanwen/go-fuse/v2/fs"
@@ -33,17 +32,20 @@ func (r *HelloRoot) Getattr(ctx context.Context, fh fs.FileHandle, out *fuse.Att
 var _ = (fs.NodeGetattrer)((*HelloRoot)(nil))
 var _ = (fs.NodeOnAdder)((*HelloRoot)(nil))
 
-func Mount() {
-	debug := flag.Bool("debug", false, "print debug data")
-	flag.Parse()
-	if len(flag.Args()) < 1 {
-		log.Fatal("Usage:\n  hello MOUNTPOINT")
-	}
-	opts := &fs.Options{}
-	opts.Debug = *debug
-	server, err := fs.Mount(flag.Arg(0), &HelloRoot{}, opts)
+func Mount(dir string) error {
+	debug := flag.Bool("debug", true, "print debug data")
+
+	opts := &fs.Options{
+		MountOptions: fuse.MountOptions{
+			Debug: *debug,
+		}}
+
+	server, err := fs.Mount(dir, &HelloRoot{}, opts)
+
 	if err != nil {
-		log.Fatalf("Mount fail: %v\n", err)
+		return err
 	}
+
 	server.Wait()
+	return nil
 }

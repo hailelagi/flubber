@@ -1,0 +1,4 @@
+app:
+  name: "flubber-s3"
+namespace: "/"
+
