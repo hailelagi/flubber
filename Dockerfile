@@ -5,8 +5,14 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /flubber
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main
 
-CMD ["/flubber"]
+FROM alpine:latest
+
+COPY --from=builder /main /main
+
+EXPOSE 8080
+
+CMD ["/main"]
