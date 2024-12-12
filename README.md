@@ -3,14 +3,16 @@ A simple FUSE filesystem built on s3
 
 ## Installation
 
-probably want to run this inside a docker container or an emulation of linux, or linux, or on [macfuse](https://osxfuse.github.io/) on macOS.
+probably want to run this on linux or a good emulation of linux or on [macfuse](https://osxfuse.github.io/) on macOS.
 
-```
+Alternatively(not recommended):
+```zsh
  docker build --tag docker-flubber .
 ```
 
-```
-docker run -p 8080:8080 docker-flubber
+```zsh
+docker run -it --device=/dev/fuse --cap-add SYS_ADMIN \
+--security-opt apparmor=unconfined -p 8080:8080 docker-flubber
 ```
 
 ## Learn more
