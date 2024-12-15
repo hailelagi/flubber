@@ -24,6 +24,16 @@ jobs:
       - name: Run vetting
         run: go vet
 
+      - name: Setup Minio
+        shell: bash
+        run: |
+          docker run -d --network host --name minio \
+            -e "MINIO_ACCESS_KEY=minioadmin" \
+            -e "MINIO_SECRET_KEY=minioadmin" \
+            -e "MINIO_ADDRESS=:9000" \
+            -v /tmp/data:/data \
+            -v /tmp/config:/root/.minio \
+            minio/minio:latest server /data
   test:
     runs-on: ubuntu-latest
     steps:

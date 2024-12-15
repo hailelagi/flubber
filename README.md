@@ -15,6 +15,12 @@ docker run -it --device=/dev/fuse --cap-add SYS_ADMIN \
 --security-opt apparmor=unconfined -p 8080:8080 docker-flubber
 ```
 
+s3 via minio:
+```zsh
+podman run -p 9000:9000 -p 9001:9001 \
+  quay.io/minio/minio server /data --console-address ":9001"
+```
+
 ## Learn more
 - https://docs.kernel.org/filesystems/vfs.html
 - https://www.kernel.org/doc/html/v6.3/filesystems/fuse.html
