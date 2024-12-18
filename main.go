@@ -1,9 +1,15 @@
+//go:build linux || darwin
+
 package main
 
 import (
+	"log"
+
 	"github.com/hailelagi/flubber/cmd"
 )
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
