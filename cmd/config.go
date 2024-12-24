@@ -103,5 +103,4 @@ func init() {
 		cmd.Println("Global Flags:")
 		cmd.Println("  -h, --help   help for config")
 	})
-
 }

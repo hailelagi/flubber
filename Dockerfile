@@ -13,15 +13,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /main
 
 FROM alpine:latest
 
-# all your keys belong to us
-ENV BUCKET_URL=
-ENV ACCESS_KEY_ID=
-ENV ACCESS_KEY_ID_FILE=
-ENV SECRET_ACCESS_KEY=
-ENV SECRET_ACCESS_KEY_FILE=
-ENV AUTHFILE=
-ENV BUCKET_NAME=
-
 COPY --from=builder /main /main
 
 RUN apk add --no-cache fuse3
