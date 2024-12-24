@@ -16,9 +16,9 @@ var mountCmd = &cobra.Command{
 	Long:  `mounts a filesystem at the specified directory`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cmd.Flags().StringVar(&directory, "dir", "/flubber-fuse", "mount directory")
+		rootCmd.Flags().StringVarP(&directory, "dir", "d", "", "mount dir required!!")
 
-		if err := cmd.MarkFlagRequired("dir"); err != nil {
+		if err := rootCmd.MarkFlagRequired("dir"); err != nil {
 			log.Fatal(err)
 			return err
 		}
