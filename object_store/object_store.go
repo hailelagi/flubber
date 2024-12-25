@@ -26,6 +26,12 @@ func NewBucket() {
 }
 */
 
+func FormatBucket(imageName, imageSize, blockSize string) {
+	// Placeholder function to format the bucket
+	// Implement the actual logic to format the bucket here
+	fmt.Printf("Bucket formatted with image %s, size %s, and block size %s\n", imageName, imageSize, blockSize)
+}
+
 func UploadObject(ctx context.Context, bucket *blob.Bucket, key string, data []byte) error {
 	w, err := bucket.NewWriter(ctx, key, nil)
 	if err != nil {
