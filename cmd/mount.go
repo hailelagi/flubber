@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/hailelagi/flubber/fuse"
+	"github.com/hailelagi/flubber/internal/fuse"
 	"github.com/spf13/cobra"
 )
 

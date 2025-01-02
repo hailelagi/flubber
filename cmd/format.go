@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	objectstore "github.com/hailelagi/flubber/object_store"
+	objectstore "github.com/hailelagi/flubber/internal/object_store"
 	"github.com/spf13/cobra"
 )
 
