@@ -13,6 +13,36 @@ type flubberRoot struct {
 	fs.Inode
 }
 
+var (
+	// syscall access method interfaces
+	_ = (fs.NodeGetattrer)((*flubberRoot)(nil))
+	_ = (fs.NodeOnAdder)((*flubberRoot)(nil))
+	_ = (fs.NodeOpener)((*flubberRoot)(nil))
+	_ = (fs.NodeReader)((*flubberRoot)(nil))
+
+	// todo on a new file node creation
+	// _ = (fs.FileReader)((*flubberRoot)(nil))
+	// _ = (fs.FileWriter)((*flubberRoot)(nil))
+)
+
+func Mount(mountpoint string) error {
+	debug := flag.Bool("debug", true, "print debug data")
+
+	opts := &fs.Options{
+		MountOptions: fuse.MountOptions{
+			Debug: *debug,
+		},
+	}
+
+	server, err := fs.Mount(mountpoint, &flubberRoot{}, opts)
+	if err != nil {
+		return err
+	}
+
+	server.Wait()
+	return nil
+}
+
 /*
 todo move to during new file/inode allocation/creation
 func (r *flubberRoot) OnAdd(ctx context.Context) {
@@ -82,33 +112,3 @@ func (r *flubberRoot) Lookup(ctx context.Context, name string, out *fuse.EntryOu
 }
 
 func (r *flubberRoot) Close(ctx context.Context) {}
-
-var (
-	// syscall access method interfaces
-	_ = (fs.NodeGetattrer)((*flubberRoot)(nil))
-	_ = (fs.NodeOnAdder)((*flubberRoot)(nil))
-	_ = (fs.NodeOpener)((*flubberRoot)(nil))
-	_ = (fs.NodeReader)((*flubberRoot)(nil))
-
-	// todo on a new file node creation
-	// _ = (fs.FileReader)((*flubberRoot)(nil))
-	// _ = (fs.FileWriter)((*flubberRoot)(nil))
-)
-
-func Mount(mountPoint string) error {
-	debug := flag.Bool("debug", true, "print debug data")
-
-	opts := &fs.Options{
-		MountOptions: fuse.MountOptions{
-			Debug: *debug,
-		},
-	}
-
-	server, err := fs.Mount(mountPoint, &flubberRoot{}, opts)
-	if err != nil {
-		return err
-	}
-
-	server.Wait()
-	return nil
-}

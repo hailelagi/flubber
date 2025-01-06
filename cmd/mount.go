@@ -7,23 +7,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var directory string
+var mountpoint string
 
 // mountCmd represents the mount command
 var mountCmd = &cobra.Command{
 	Use:   "mount",
 	Short: "mount a filesystem at a directory",
-	Long:  `mounts a filesystem at the specified directory`,
+	Long:  `mounts a filesystem at the specified mount point`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		rootCmd.Flags().StringVarP(&directory, "dir", "d", "", "mount dir required!!")
+		rootCmd.Flags().StringVarP(&mountpoint, "mountpoint", "m", "", "mount point required!!")
 
-		if err := rootCmd.MarkFlagRequired("dir"); err != nil {
+		if err := rootCmd.MarkFlagRequired("mountpoint"); err != nil {
 			log.Fatal(err)
 			return err
 		}
 
-		return fuse.Mount(directory)
+		return fuse.Mount(mountpoint)
 	},
 }
 
