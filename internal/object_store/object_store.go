@@ -6,8 +6,11 @@ import (
 	"io"
 
 	"gocloud.dev/blob"
+	"gocloud.dev/blob/s3blob"
 	// "gocloud.dev/blob/s3blob"
 )
+
+var storeClient *s3blob.URLOpener
 
 func FormatBucket(imageName, imageSize, blockSize string) {
 	// Placeholder function to format the bucket
