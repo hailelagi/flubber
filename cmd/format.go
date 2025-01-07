@@ -26,17 +26,8 @@ var formatCmd = &cobra.Command{
 			}
 			values[flag] = value
 		}
-		requiredFields := []string{
-			"image",
-			"size",
-		}
 
-		for _, field := range requiredFields {
-			if values[field] == "" {
-				cmd.PrintErrf("Missing required flag: %s\n", field)
-				return
-			}
-		}
+		cmd.MarkFlagsRequiredTogether("image", "size", "block")
 
 		imageName := values["image"]
 		imageSize := values["size"]

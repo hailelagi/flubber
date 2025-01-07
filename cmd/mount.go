@@ -11,22 +11,26 @@ var mountpoint string
 
 // mountCmd represents the mount command
 var mountCmd = &cobra.Command{
-	Use:   "mount",
+	Use:   "mount -m=<dir>",
 	Short: "mount a filesystem at a directory",
 	Long:  `mounts a filesystem at the specified mount point`,
-	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		rootCmd.Flags().StringVarP(&mountpoint, "mountpoint", "m", "", "mount point required!!")
-
-		if err := rootCmd.MarkFlagRequired("mountpoint"); err != nil {
+		mp, err := cmd.Flags().GetString("mountpoint")
+		if err != nil {
 			log.Fatal(err)
 			return err
 		}
 
-		return fuse.Mount(mountpoint)
+		return fuse.Mount(mp)
 	},
 }
 
 func init() {
+	mountCmd.Flags().StringVarP(&mountpoint, "mountpoint", "m", "", "mount point required!")
+
+	if err := mountCmd.MarkFlagRequired("mountpoint"); err != nil {
+		log.Fatal(err)
+	}
+
 	rootCmd.AddCommand(mountCmd)
 }

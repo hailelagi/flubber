@@ -15,10 +15,10 @@ type flubberRoot struct {
 
 var (
 	// syscall access method interfaces
-	_ = (fs.NodeGetattrer)((*flubberRoot)(nil))
-	_ = (fs.NodeOnAdder)((*flubberRoot)(nil))
-	_ = (fs.NodeOpener)((*flubberRoot)(nil))
-	_ = (fs.NodeReader)((*flubberRoot)(nil))
+	_ fs.NodeGetattrer = (*flubberRoot)(nil)
+	_ fs.NodeOnAdder   = (*flubberRoot)(nil)
+	_ fs.NodeOpener    = (*flubberRoot)(nil)
+	_ fs.NodeReader    = (*flubberRoot)(nil)
 
 	// todo on a new file node creation
 	// _ = (fs.FileReader)((*flubberRoot)(nil))
@@ -76,7 +76,7 @@ func (r *flubberRoot) OnAdd(ctx context.Context) {
 }
 
 func (r *flubberRoot) Getattr(ctx context.Context, fh fs.FileHandle, out *fuse.AttrOut) syscall.Errno {
-	out.Mode = 0755
+	out.Mode = 0o755
 	return 0
 }
 
@@ -95,7 +95,7 @@ func (r *flubberRoot) Read(ctx context.Context, fd fs.FileHandle, dest []byte, o
 
 func (r *flubberRoot) Lookup(ctx context.Context, name string, out *fuse.EntryOut) (*fs.Inode, syscall.Errno) {
 	ops := flubberRoot{}
-	out.Mode = 0755
+	out.Mode = 0o755
 	out.Size = 42
 
 	if name == "." {

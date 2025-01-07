@@ -51,20 +51,20 @@ var configCmd = &cobra.Command{
 
 		if err := viper.SafeWriteConfigAs(viper.ConfigFileUsed()); err != nil {
 			if viper.ConfigFileUsed() == "" {
-				home, err := os.UserHomeDir()
-				if err != nil {
+				home, errDir := os.UserHomeDir()
+				if errDir != nil {
 					cmd.PrintErrf("Error getting user home directory: %v\n", err)
 					return
 				}
 				configFile := filepath.Join(home, ".config", "flubber", "config.yaml")
 
-				err = os.MkdirAll(filepath.Dir(configFile), 0755)
+				err = os.MkdirAll(filepath.Dir(configFile), 0o755)
 				if err != nil {
 					cmd.PrintErrf("Error creating config directory: %v\n", err)
 					return
 				}
 
-				if err := viper.SafeWriteConfigAs(configFile); err != nil {
+				if errConfig := viper.SafeWriteConfigAs(configFile); errConfig != nil {
 					cmd.PrintErrln("warning overwriting previous config.")
 					if err := viper.WriteConfigAs(configFile); err != nil {
 						cmd.PrintErrf("Error saving config: %v\n", err)
