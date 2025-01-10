@@ -25,3 +25,7 @@ podman run -p 9000:9000 -p 9001:9001 \
 - https://docs.kernel.org/filesystems/vfs.html
 - https://www.kernel.org/doc/html/v6.3/filesystems/fuse.html
 
+FUSE API:
+- https://libfuse.github.io/doxygen/
+- https://pkg.go.dev/github.com/hanwen/go-fuse/v2/fuse
+- https://pkg.go.dev/github.com/hanwen/go-fuse/v2/fuse
