@@ -3,3 +3,6 @@ flubber
 coverage.out
 .envrc
 .env
+
+# ignore fs overlay
+flubber-fuse

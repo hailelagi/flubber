@@ -68,7 +68,7 @@ func (r *flubberRoot) OnAdd(ctx context.Context) {
 			ctx, &fs.MemRegularFile{
 				Data: []byte("Hello, world!\n"),
 				Attr: fuse.Attr{
-					Mode: 0o644,
+					Mode: 0644,
 				},
 			}, fs.StableAttr{Ino: 2})
 		r.AddChild("hello.txt", ch, false)
@@ -76,7 +76,7 @@ func (r *flubberRoot) OnAdd(ctx context.Context) {
 }
 
 func (r *flubberRoot) Getattr(ctx context.Context, fh fs.FileHandle, out *fuse.AttrOut) syscall.Errno {
-	out.Mode = 0o755
+	out.Mode = 0755
 	return 0
 }
 
@@ -95,7 +95,7 @@ func (r *flubberRoot) Read(ctx context.Context, fd fs.FileHandle, dest []byte, o
 
 func (r *flubberRoot) Lookup(ctx context.Context, name string, out *fuse.EntryOut) (*fs.Inode, syscall.Errno) {
 	ops := flubberRoot{}
-	out.Mode = 0o755
+	out.Mode = 0755
 	out.Size = 42
 
 	if name == "." {
