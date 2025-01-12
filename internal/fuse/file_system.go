@@ -10,6 +10,8 @@ import (
 )
 
 type flubberRoot struct {
+	// todo: embed config struct with a pointer/handle to the object store instance
+	// Config
 	fs.Inode
 }
 
@@ -24,6 +26,14 @@ var (
 	// _ = (fs.FileReader)((*flubberRoot)(nil))
 	// _ = (fs.FileWriter)((*flubberRoot)(nil))
 )
+
+func NewBlockFileSystem(name string) (root fs.InodeEmbedder, err error) {
+	return NewFS(name)
+}
+
+func NewFS(name string) (fs.InodeEmbedder, error) {
+	return &flubberRoot{}, nil
+}
 
 func Mount(mountpoint string) error {
 	debug := flag.Bool("debug", true, "print debug data")
