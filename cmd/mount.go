@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"log"
+	"time"
 
-	"github.com/hailelagi/flubber/internal/fuse"
+	fs "github.com/hailelagi/flubber/internal/fuse"
 	"github.com/spf13/cobra"
 )
 
 var mountpoint string
+var config fs.MntConfig
 
 // mountCmd represents the mount command
 var mountCmd = &cobra.Command{
@@ -21,12 +23,16 @@ var mountCmd = &cobra.Command{
 			return err
 		}
 
-		return fuse.Mount(mp)
+		return fs.InitMount(mp, &config)
 	},
 }
 
 func init() {
 	mountCmd.Flags().StringVarP(&mountpoint, "mountpoint", "m", "", "mount point required!")
+	mountCmd.Flags().StringVarP(&config.Profile, "profile", "p", "profile.dat", "cpu profile")
+	mountCmd.Flags().StringVarP(&config.MemProfile, "memprofile", "mem", "memprofile.dat", "memory profile")
+	config.Ttl = mountCmd.Flags().DurationP("ttl", "ttl", time.Second, "attribute/entry cache TTL")
+	config.Debug = *mountCmd.Flags().BoolP("debug", "d", true, "debug")
 
 	if err := mountCmd.MarkFlagRequired("mountpoint"); err != nil {
 		log.Fatal(err)

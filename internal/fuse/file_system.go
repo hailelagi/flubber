@@ -2,8 +2,14 @@ package fuse
 
 import (
 	"context"
-	"flag"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"runtime"
+	"runtime/pprof"
 	"syscall"
+	"time"
 
 	"github.com/hanwen/go-fuse/v2/fs"
 	"github.com/hanwen/go-fuse/v2/fuse"
@@ -35,21 +41,63 @@ func NewFS(name string) (fs.InodeEmbedder, error) {
 	return &flubberRoot{}, nil
 }
 
-func Mount(mountpoint string) error {
-	debug := flag.Bool("debug", true, "print debug data")
+type MntConfig struct {
+	Debug      bool
+	Profile    string
+	MemProfile string
+	Ttl        *time.Duration
+}
 
+func InitMount(mountpoint string, config *MntConfig) error {
 	opts := &fs.Options{
+		AttrTimeout:  config.Ttl,
+		EntryTimeout: config.Ttl,
 		MountOptions: fuse.MountOptions{
-			Debug: *debug,
+			Debug: config.Debug,
 		},
 	}
 
-	server, err := fs.Mount(mountpoint, &flubberRoot{}, opts)
+	root, err := NewBlockFileSystem(opts.Name)
 	if err != nil {
 		return err
 	}
 
+	server, err := fs.Mount(mountpoint, root, opts)
+	if err != nil {
+		return err
+	}
+
+	var profFile, memProfFile io.Writer
+
+	if config.Profile != "" {
+		profFile, err = os.Create(config.Profile)
+		if err != nil {
+			log.Fatalf("os.Create: %v", err)
+		}
+	}
+	if config.MemProfile != "" {
+		memProfFile, err = os.Create(config.MemProfile)
+		if err != nil {
+			log.Fatalf("os.Create: %v", err)
+		}
+	}
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "root block creation failed: %v\n", err)
+		os.Exit(1)
+	}
+
+	runtime.GC()
+
+	if profFile != nil {
+		pprof.StartCPUProfile(profFile)
+		defer pprof.StopCPUProfile()
+	}
+
 	server.Wait()
+	if memProfFile != nil {
+		pprof.WriteHeapProfile(memProfFile)
+	}
 	return nil
 }
 
