@@ -10,7 +10,7 @@ import (
 var unmountCmd = &cobra.Command{
 	Use:   "unmount",
 	Short: "unmount a filesystem",
-	Long:  `mounts a filesystem at the specified mount point`,
+	Long:  `unmount a previously mounted filesystem at a mountpoint`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if mp := args[0]; mp != "" {
@@ -22,7 +22,7 @@ var unmountCmd = &cobra.Command{
 		if err := exeCmd.Run(); err != nil {
 			return err
 		} else {
-			cmd.Println("unmounted filesystem")
+			cmd.Println("\n unmounted filesystem")
 		}
 
 		return nil
@@ -31,4 +31,12 @@ var unmountCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(unmountCmd)
+
+	unmountCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		cmd.Println("Usage:")
+		cmd.Println("  unmount <./example_dir>")
+		cmd.Println()
+		cmd.Println("Flags:")
+		cmd.Println("  -h, --help   help for config")
+	})
 }

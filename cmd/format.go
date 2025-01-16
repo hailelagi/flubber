@@ -38,10 +38,11 @@ var formatCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(formatCmd)
+
 	formatCmd.Flags().StringP("image", "i", "", "Image name (required)")
 	formatCmd.Flags().IntP("size", "s", 5120, "Size of the image to create on the bucket(required)")
 	formatCmd.Flags().IntP("block", "b", 4096, "Size of blocks (defaults to 4KiB)")
-	rootCmd.AddCommand(formatCmd)
 }
 
 func init() {

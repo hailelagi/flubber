@@ -99,8 +99,6 @@ func init() {
 		cmd.Println("  --bucket_name string       Name of the S3 bucket (required)")
 		cmd.Println("  --access_key_id string     Access key ID for the S3 bucket (required)")
 		cmd.Println("  --secret_access_key string Secret access key for the S3 bucket (required)")
-		cmd.Println()
-		cmd.Println("Global Flags:")
 		cmd.Println("  -h, --help   help for config")
 	})
 }
