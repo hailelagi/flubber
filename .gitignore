@@ -3,3 +3,5 @@ flubber
 coverage.out
 .envrc
 .env
+memprofile.dat
+profile.dat

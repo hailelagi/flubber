@@ -14,11 +14,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer logger.Sync()
 
 	sugar := logger.Sugar()
-
 	if err := cmd.Execute(); err != nil {
 		sugar.Fatal(err)
 	}

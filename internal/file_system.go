@@ -2,9 +2,7 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"io"
-	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -13,6 +11,7 @@ import (
 
 	"github.com/hanwen/go-fuse/v2/fs"
 	"github.com/hanwen/go-fuse/v2/fuse"
+	"go.uber.org/zap"
 )
 
 type flubberRoot struct {
@@ -20,6 +19,8 @@ type flubberRoot struct {
 	// Config
 	fs.Inode
 }
+
+func (r *flubberRoot) Close(ctx context.Context) {}
 
 var (
 	// syscall access method interfaces
@@ -59,12 +60,12 @@ func InitMount(mountpoint string, config *MntConfig) error {
 
 	root, err := NewBlockFileSystem(opts.Name)
 	if err != nil {
-		return err
+		zap.L().Fatal("root block creation failed:", zap.Error(err))
 	}
 
 	server, err := fs.Mount(mountpoint, root, opts)
 	if err != nil {
-		return err
+		zap.L().Fatal("mount failure", zap.Error(err))
 	}
 
 	var profFile, memProfFile io.Writer
@@ -72,31 +73,33 @@ func InitMount(mountpoint string, config *MntConfig) error {
 	if config.Profile != "" {
 		profFile, err = os.Create(config.Profile)
 		if err != nil {
-			log.Fatalf("os.Create: %v", err)
+			zap.L().Warn("cannot create cpu profile", zap.Error(err))
 		}
 	}
 	if config.MemProfile != "" {
 		memProfFile, err = os.Create(config.MemProfile)
 		if err != nil {
-			log.Fatalf("os.Create: %v", err)
+			zap.L().Warn("cannot create mem profile", zap.Error(err))
 		}
-	}
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "root block creation failed: %v\n", err)
-		os.Exit(1)
 	}
 
 	runtime.GC()
 
 	if profFile != nil {
-		pprof.StartCPUProfile(profFile)
+		err := pprof.StartCPUProfile(profFile)
+
+		if err != nil {
+			zap.L().Info(err.Error())
+		}
 		defer pprof.StopCPUProfile()
 	}
 
 	server.Wait()
 	if memProfFile != nil {
-		pprof.WriteHeapProfile(memProfFile)
+		err := pprof.WriteHeapProfile(memProfFile)
+		if err != nil {
+			zap.L().Info(err.Error())
+		}
 	}
 	return nil
 }
@@ -124,7 +127,7 @@ func (r *flubberRoot) OnAdd(ctx context.Context) {
 
 		ch := r.NewPersistentInode(
 			ctx, &fs.MemRegularFile{
-				Data: []byte("Hello, world!\n"),
+				Data: []byte(""),
 				Attr: fuse.Attr{
 					Mode: 0644,
 				},
@@ -168,5 +171,3 @@ func (r *flubberRoot) Lookup(ctx context.Context, name string, out *fuse.EntryOu
 
 	return r.NewInode(ctx, &ops, fs.StableAttr{Mode: syscall.S_IFREG}), 0
 }
-
-func (r *flubberRoot) Close(ctx context.Context) {}
