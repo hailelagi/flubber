@@ -7,7 +7,7 @@ import (
 )
 
 type Entry struct {
-	Offset uint64
+	offset uint64
 	buffer []byte
 	txn    *WalTxn
 }
