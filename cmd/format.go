@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	objectstore "github.com/hailelagi/flubber/internal/object_store"
+	fs "github.com/hailelagi/flubber/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,7 @@ var formatCmd = &cobra.Command{
 		imageSize := values["size"]
 		blockSize := values["block"]
 
-		objectstore.FormatBucket(imageName, imageSize, blockSize)
+		fs.FormatBucket(imageName, imageSize, blockSize)
 	},
 }
 

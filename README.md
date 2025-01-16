@@ -12,7 +12,7 @@ Alternatively(not recommended):
 
 ```zsh
 docker run -it --device=/dev/fuse --cap-add SYS_ADMIN \
---security-opt apparmor=unconfined -p 8080:8080 docker-flubber
+--security-opt apparmor=unconfined -p 9001:9001 docker-flubber
 ```
 
 s3 via minio:
@@ -24,8 +24,5 @@ podman run -p 9000:9000 -p 9001:9001 \
 ## Learn more
 - https://docs.kernel.org/filesystems/vfs.html
 - https://www.kernel.org/doc/html/v6.3/filesystems/fuse.html
-
-FUSE API:
 - https://libfuse.github.io/doxygen/
-- https://pkg.go.dev/github.com/hanwen/go-fuse/v2/fuse
 - https://pkg.go.dev/github.com/hanwen/go-fuse/v2/fuse

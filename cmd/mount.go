@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	fs "github.com/hailelagi/flubber/internal/fuse"
+	fs "github.com/hailelagi/flubber/internal"
 	"github.com/spf13/cobra"
 )
 
