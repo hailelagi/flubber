@@ -12,10 +12,15 @@ import (
 
 var storeClient *s3blob.URLOpener
 
-func FormatBucket(imageName, imageSize, blockSize string) {
+func FormatBucket(imageName string, blockSize, pageSize int) {
 	// Placeholder function to format the bucket
-	// Implement the actual logic to format the bucket here
-	fmt.Printf("Bucket formatted with image %s, size %s, and block size %s\n", imageName, imageSize, blockSize)
+
+	/*
+		bucketURL := viper.GetString("bucket.url")
+		bucketName := viper.GetString("bucket.name")
+		accessKeyId = viper.GetString("credentials.access_key_id")
+		secretAccessKey := viper.GetString("credentials.secret_access_key")
+	*/
 }
 
 func UploadObject(ctx context.Context, bucket *blob.Bucket, key string, data []byte) error {

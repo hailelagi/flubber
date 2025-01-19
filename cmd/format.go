@@ -11,29 +11,27 @@ var formatCmd = &cobra.Command{
 	Short: "mkfs the bucket",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		flags := map[string]string{
-			"image": "Error getting image name:",
-			"size":  "Error getting image size:",
-			"block": "Error getting block size:",
+		cmd.MarkFlagsRequiredTogether("page", "size")
+
+		imageName, err := cmd.Flags().GetString("image")
+		if err != nil {
+			cmd.PrintErrln("Error getting image name:", err)
+			return
 		}
 
-		values := make(map[string]string)
-		for flag, errMsg := range flags {
-			value, err := cmd.Flags().GetString(flag)
-			if err != nil {
-				cmd.PrintErrln(errMsg, err)
-				return
-			}
-			values[flag] = value
+		blockSize, err := cmd.Flags().GetInt("size")
+		if err != nil {
+			cmd.PrintErrln("Error getting image size:", err)
+			return
 		}
 
-		cmd.MarkFlagsRequiredTogether("image", "size", "block")
+		pageSize, err := cmd.Flags().GetInt("page")
+		if err != nil {
+			cmd.PrintErrln("Error getting page size:", err)
+			return
+		}
 
-		imageName := values["image"]
-		imageSize := values["size"]
-		blockSize := values["block"]
-
-		fs.FormatBucket(imageName, imageSize, blockSize)
+		fs.FormatBucket(imageName, pageSize, blockSize)
 	},
 }
 
@@ -41,8 +39,8 @@ func init() {
 	rootCmd.AddCommand(formatCmd)
 
 	formatCmd.Flags().StringP("image", "i", "", "Image name (required)")
-	formatCmd.Flags().IntP("size", "s", 5120, "Size of the image to create on the bucket(required)")
-	formatCmd.Flags().IntP("block", "b", 4096, "Size of blocks (defaults to 4KiB)")
+	formatCmd.Flags().IntP("size", "s", 5120, "blocks to preallocate in bucket")
+	formatCmd.Flags().IntP("page", "p", 4096, "page size (defaults to 4KiB)")
 }
 
 func init() {
