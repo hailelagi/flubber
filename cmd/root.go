@@ -13,9 +13,9 @@ var (
 	cfgFile string
 	rootCmd = &cobra.Command{
 		Use:   "flubber",
-		Short: "A FUSE filesystem built on s3",
+		Short: "A FUSE filesystem built on object storage",
 		Long: `flubber is a filesystem in userspace (FUSE)
-that shims out the backing storage to a block storage service such as s3`,
+that shims out the backing storage to a block storage service such as object storage`,
 		Version: "0.0.1",
 	}
 )

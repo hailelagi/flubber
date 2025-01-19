@@ -1,5 +1,5 @@
 # flubber
-A simple FUSE filesystem built on s3
+A simple FUSE filesystem built on object storage
 
 ## Installation
 
@@ -15,7 +15,7 @@ docker run -it --device=/dev/fuse --cap-add SYS_ADMIN \
 --security-opt apparmor=unconfined -p 9001:9001 docker-flubber
 ```
 
-s3 via minio:
+object storage via minio:
 ```zsh
 podman run -p 9000:9000 -p 9001:9001 \
   quay.io/minio/minio server /data --console-address ":9001"
