@@ -14,7 +14,7 @@ var config fs.MntConfig
 var mountCmd = &cobra.Command{
 	Use:   "mount <./example_dir> [flags]",
 	Short: "mount a filesystem at a directory",
-	Long:  `mounts a filesystem at the specified mount point`,
+	Long:  `mount a filesystem at the specified mount point`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if mp := args[0]; mp != "" {
@@ -32,5 +32,4 @@ func init() {
 	mountCmd.Flags().StringVar(&config.MemProfile, "memprofile", "memprofile.dat", "memory profile")
 	config.Ttl = mountCmd.Flags().Duration("ttl", time.Second, "attribute/entry cache TTL")
 	config.Debug = *mountCmd.Flags().BoolP("debug", "d", true, "debug")
-
 }
