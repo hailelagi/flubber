@@ -17,6 +17,18 @@ type StoreClient struct {
 	*minio.Client
 }
 
+func (*StoreClient) Get(ctx context.Context, offset uint64) ([]byte, error) {
+	return []byte{}, nil
+}
+
+func (*StoreClient) Append(ctx context.Context, offset uint64) error {
+	return nil
+}
+
+func (*StoreClient) Scan(ctx context.Context, offset uint64) ([][]byte, error) {
+	return [][]byte{}, nil
+}
+
 func InitObjectStoreClient(config *config.Storage) *StoreClient {
 	client, err := minio.New(config.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.SecretAccessKey, ""),
