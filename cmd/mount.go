@@ -3,12 +3,13 @@ package cmd
 import (
 	"time"
 
-	fs "github.com/hailelagi/flubber/internal"
+	"github.com/hailelagi/flubber/internal/config"
+	"github.com/hailelagi/flubber/internal/fs"
 	"github.com/spf13/cobra"
 )
 
 var mountpoint string
-var config fs.MntConfig
+var mntConfig config.Mount
 
 // mountCmd represents the mount command
 var mountCmd = &cobra.Command{
@@ -21,15 +22,15 @@ var mountCmd = &cobra.Command{
 			mountpoint = mp
 		}
 
-		return fs.InitMount(mountpoint, &config)
+		return fs.InitMount(mountpoint, &mntConfig)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(mountCmd)
 
-	mountCmd.Flags().StringVarP(&config.Profile, "profile", "p", "profile.dat", "cpu profile")
-	mountCmd.Flags().StringVar(&config.MemProfile, "memprofile", "memprofile.dat", "memory profile")
-	config.Ttl = mountCmd.Flags().Duration("ttl", time.Second, "attribute/entry cache TTL")
-	config.Debug = *mountCmd.Flags().BoolP("debug", "d", true, "debug")
+	mountCmd.Flags().StringVarP(&mntConfig.Profile, "profile", "p", "profile.dat", "cpu profile")
+	mountCmd.Flags().StringVar(&mntConfig.MemProfile, "memprofile", "memprofile.dat", "memory profile")
+	mntConfig.Ttl = mountCmd.Flags().Duration("ttl", time.Second, "attribute/entry cache TTL")
+	mntConfig.Debug = *mountCmd.Flags().BoolP("debug", "d", true, "debug")
 }

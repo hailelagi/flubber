@@ -78,7 +78,7 @@ var configCmd = &cobra.Command{
 			}
 		}
 
-		cmd.Println("S3 credentials configured and saved successfully")
+		cmd.Println("object store credentials configured and saved successfully")
 	},
 }
 

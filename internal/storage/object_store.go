@@ -1,26 +1,40 @@
-package internal
+package storage
 
 import (
 	"context"
-	"fmt"
 	"io"
 
+	"fmt"
+
+	"github.com/hailelagi/flubber/internal/config"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"go.uber.org/zap"
 	"gocloud.dev/blob"
-	"gocloud.dev/blob/s3blob"
-	// "gocloud.dev/blob/s3blob"
 )
 
-var storeClient *s3blob.URLOpener
+var client *minio.Client
+
+func InitObjectStoreClient(config *config.Storage) *minio.Client {
+	var err error
+
+	client, err = minio.New(config.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.SecretAccessKey, ""),
+		Secure: config.UseSSL,
+	})
+
+	if err != nil {
+		zap.L().Fatal("could not connect to block store:", zap.Error(err))
+	}
+
+	return client
+}
 
 func FormatBucket(imageName string, blockSize, pageSize int) {
-	// Placeholder function to format the bucket
+	config := config.GetStorageConfig()
+	client := InitObjectStoreClient(config)
 
-	/*
-		bucketURL := viper.GetString("bucket.url")
-		bucketName := viper.GetString("bucket.name")
-		accessKeyId = viper.GetString("credentials.access_key_id")
-		secretAccessKey := viper.GetString("credentials.secret_access_key")
-	*/
+	fmt.Println(client.BucketExists(context.TODO(), "test"))
 }
 
 func UploadObject(ctx context.Context, bucket *blob.Bucket, key string, data []byte) error {

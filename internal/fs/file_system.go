@@ -1,4 +1,4 @@
-package internal
+package fs
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"syscall"
-	"time"
 
+	"github.com/hailelagi/flubber/internal/config"
 	"github.com/hanwen/go-fuse/v2/fs"
 	"github.com/hanwen/go-fuse/v2/fuse"
 	"go.uber.org/zap"
@@ -20,7 +20,7 @@ type flubberRoot struct {
 	fs.Inode
 }
 
-func (r *flubberRoot) Close(ctx context.Context) {}
+func (r *flubberRoot) Close(ctx *context.Context) {}
 
 var (
 	// syscall access method interfaces
@@ -42,14 +42,7 @@ func NewFS(name string) (fs.InodeEmbedder, error) {
 	return &flubberRoot{}, nil
 }
 
-type MntConfig struct {
-	Debug      bool
-	Profile    string
-	MemProfile string
-	Ttl        *time.Duration
-}
-
-func InitMount(mountpoint string, config *MntConfig) error {
+func InitMount(mountpoint string, config *config.Mount) error {
 	opts := &fs.Options{
 		AttrTimeout:  config.Ttl,
 		EntryTimeout: config.Ttl,

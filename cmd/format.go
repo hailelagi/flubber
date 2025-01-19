@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	fs "github.com/hailelagi/flubber/internal"
+	"github.com/hailelagi/flubber/internal/storage"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,7 @@ var formatCmd = &cobra.Command{
 			return
 		}
 
-		fs.FormatBucket(imageName, pageSize, blockSize)
+		storage.FormatBucket(imageName, pageSize, blockSize)
 	},
 }
 

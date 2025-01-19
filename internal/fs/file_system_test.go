@@ -1,4 +1,6 @@
-package internal
+//go:build !darwin
+
+package fs
 
 import (
 	"os"
