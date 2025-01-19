@@ -13,21 +13,21 @@ import (
 	"gocloud.dev/blob"
 )
 
-var client *minio.Client
+type StoreClient struct {
+	*minio.Client
+}
 
-func InitObjectStoreClient(config *config.Storage) *minio.Client {
-	var err error
-
-	client, err = minio.New(config.Endpoint, &minio.Options{
+func InitObjectStoreClient(config *config.Storage) *StoreClient {
+	client, err := minio.New(config.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.AccessKeyID, config.SecretAccessKey, ""),
 		Secure: config.UseSSL,
 	})
 
 	if err != nil {
-		zap.L().Fatal("could not connect to block store:", zap.Error(err))
+		zap.S().Fatal("could not connect to block store:", zap.Error(err))
 	}
 
-	return client
+	return &StoreClient{Client: client}
 }
 
 func FormatBucket(imageName string, blockSize, pageSize int) {

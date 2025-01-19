@@ -25,8 +25,8 @@ type Mount struct {
 func GetStorageConfig() *Storage {
 	return &Storage{
 		Endpoint:             viper.GetString("bucket.url"),
-		AccessKeyID:          viper.GetString("bucket.access_key_id"),
-		SecretAccessKey:      viper.GetString("bucket.secret_key_id"),
+		AccessKeyID:          viper.GetString("credentials.access_key_id"),
+		SecretAccessKey:      viper.GetString("credentials.secret_access_key"),
 		UseSSL:               viper.GetBool("bucket.ssl") || false,
 		EnableBucketPolicies: viper.GetBool("bucket.policies") || false,
 		AllowedBuckets:       map[string]string{"public": "read", "private": "all", "local": "all"},

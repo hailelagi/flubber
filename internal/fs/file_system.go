@@ -9,18 +9,20 @@ import (
 	"syscall"
 
 	"github.com/hailelagi/flubber/internal/config"
+	"github.com/hailelagi/flubber/internal/storage"
 	"github.com/hanwen/go-fuse/v2/fs"
 	"github.com/hanwen/go-fuse/v2/fuse"
 	"go.uber.org/zap"
 )
 
 type flubberRoot struct {
-	// todo: embed config struct with a pointer/handle to the object store instance
-	// Config
+	client *storage.StoreClient
 	fs.Inode
 }
 
-func (r *flubberRoot) Close(ctx *context.Context) {}
+func (r *flubberRoot) Close(ctx *context.Context) {
+	// todo cleanup
+}
 
 var (
 	// syscall access method interfaces
@@ -34,12 +36,11 @@ var (
 	// _ = (fs.FileWriter)((*flubberRoot)(nil))
 )
 
-func NewBlockFileSystem(name string) (root fs.InodeEmbedder, err error) {
-	return NewFS(name)
-}
+func NewBlockFileSystem(name string) (fs.InodeEmbedder, error) {
+	config := config.GetStorageConfig()
+	client := storage.InitObjectStoreClient(config)
 
-func NewFS(name string) (fs.InodeEmbedder, error) {
-	return &flubberRoot{}, nil
+	return &flubberRoot{client: client}, nil
 }
 
 func InitMount(mountpoint string, config *config.Mount) error {
@@ -52,6 +53,7 @@ func InitMount(mountpoint string, config *config.Mount) error {
 	}
 
 	root, err := NewBlockFileSystem(opts.Name)
+
 	if err != nil {
 		zap.L().Fatal("root block creation failed:", zap.Error(err))
 	}
