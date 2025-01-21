@@ -5,19 +5,10 @@ import (
 	"testing"
 
 	"github.com/hailelagi/flubber/internal/config"
-	"github.com/spf13/viper"
 )
 
-func setupConfig() {
-	viper.Set("bucket.url", "localhost:9000")
-	viper.Set("bucket.name", "test")
-	viper.Set("credentials.access_key_id", "minioadmin")
-	viper.Set("credentials.secret_access_key", "minioadmin")
-
-}
-
 func TestBeginTxn(t *testing.T) {
-	setupConfig()
+	config.SetupTestConfig()
 	ctx := context.Background()
 	config := config.GetStorageConfig()
 	store := InitObjectStoreClient(config)
