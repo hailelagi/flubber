@@ -85,7 +85,7 @@ func (t *WalTxn) Put(id uint64, value []byte) error {
 	}
 
 	t.events = append(t.events, Event{
-		Type:     OpPut,
+		Type:     OperationPut,
 		Original: &originalEntry,
 	})
 
@@ -106,7 +106,7 @@ func (t *WalTxn) Delete(id uint64) error {
 	}
 
 	t.events = append(t.events, Event{
-		Type:     OpDelete,
+		Type:     OperationDelete,
 		Original: &originalEntry,
 	})
 

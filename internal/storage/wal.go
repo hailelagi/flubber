@@ -24,8 +24,8 @@ type Event struct {
 type EventType int
 
 const (
-	OpPut EventType = iota + 1
-	OpDelete
+	OperationPut EventType = iota + 1
+	OperationDelete
 )
 
 type FSWal struct {
