@@ -29,7 +29,7 @@ const (
 )
 
 type FSWal struct {
-	store     ObjectStorage
+	store     Storage
 	txnsMu    sync.RWMutex
 	txns      map[uint64]*WalTxn
 	baseDir   string

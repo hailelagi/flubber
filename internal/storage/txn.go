@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-type ObjectStorage interface {
-	Get(ctx context.Context, offset uint64) ([]byte, error)
-	Append(ctx context.Context, offset uint64) error
-	Scan(ctx context.Context, offset uint64) ([][]byte, error)
-}
-
 type WalTxn struct {
 	wal       *FSWal
 	id        uint64
