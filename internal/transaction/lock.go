@@ -24,5 +24,7 @@ type phase struct {
 	growing bool
 }
 
-func (l *TwoPhaseLock) Lock()   {}
-func (l *TwoPhaseLock) Unlock() {}
+func (l *TwoPhaseLock) Lock()      {}
+func (l *TwoPhaseLock) TryLock()   {}
+func (l *TwoPhaseLock) Unlock()    {}
+func (l *TwoPhaseLock) TryUnlock() {}
