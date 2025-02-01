@@ -34,7 +34,7 @@ func TestTxnCommit(t *testing.T) {
 			output := outputInt.(map[string]string)
 			ctx := context.Background()
 
-			txn := NewTxn(ctx, wal)
+			txn := NewWalTxn(ctx, wal)
 			if err := txn.Begin(); err != nil {
 				return false, state
 			}
@@ -57,11 +57,12 @@ func TestTxnCommit(t *testing.T) {
 				return true, newState
 
 			case "get":
-				entry, err := txn.Get(0)
+				entry, err := txn.Get(0, wal)
 				if err != nil {
 					return false, state
 				}
-				readCorrectValue := string(entry.buffer) == output[input.key]
+				// bytes.compare?
+				readCorrectValue := string(entry.Buffer) == output[input.key]
 				return readCorrectValue, state
 
 			default:

@@ -14,7 +14,7 @@ type testWalOperation struct {
 	value []byte
 }
 
-func TestWALTxnBasic(t *testing.T) {
+func TestWalTxBasic(t *testing.T) {
 	// todo: mock wal
 	/*
 		config.SetupTestConfig()
@@ -33,7 +33,7 @@ func TestWALTxnBasic(t *testing.T) {
 			state := stateInt.(map[uint64][]byte)
 			ctx := context.Background()
 
-			txn := NewTxn(ctx, wal)
+			txn := NewWalTxn(ctx, wal)
 
 			switch input.op {
 			case "begin":
@@ -122,8 +122,7 @@ func TestConcurrentWALOperations(t *testing.T) {
 			input := inputInt.(testWalOperation)
 			state := stateInt.(map[uint64][]byte)
 			ctx := context.Background()
-
-			txn := NewTxn(ctx, wal)
+			txn := NewWalTxn(ctx, wal)
 
 			switch input.op {
 			case "put":

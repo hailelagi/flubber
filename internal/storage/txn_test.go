@@ -4,25 +4,23 @@ import (
 	"context"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/hailelagi/flubber/internal/config"
 )
 
 func TestBeginTxn(t *testing.T) {
 	config.SetupTestConfig()
 	ctx := context.Background()
-	config := config.GetStorageConfig()
-	store := InitObjectStoreClient(config)
+	// config := config.GetStorageConfig()
+	// tore := storage.InitObjectStoreClient(config)
 
 	// todo create wal segment
 	// store.ComposeObject()
 
-	wal := &FSWal{
-		store: store,
-		txns:  make(map[uint64]*WalTxn),
-	}
+	wal := NewFSWal(&s3.Client{}, "test-bucket", "test")
 
 	t.Run("begin and commit", func(t *testing.T) {
-		t1 := NewTxn(ctx, wal)
+		t1 := NewWalTxn(ctx, wal)
 		err := t1.Begin()
 		if err != nil {
 			t.Errorf("failed to start txn %v", err)
@@ -35,7 +33,7 @@ func TestBeginTxn(t *testing.T) {
 	})
 
 	t.Run("begin duplicate", func(t *testing.T) {
-		txn := NewTxn(ctx, wal)
+		txn := NewWalTxn(ctx, wal)
 		err := txn.Begin()
 		if err != nil {
 			t.Errorf("Expected no error, got %v", err)
