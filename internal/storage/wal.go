@@ -29,18 +29,18 @@ const (
 )
 
 type FSWal struct {
-	store     Storage
-	txnsMu    sync.RWMutex
-	txns      map[uint64]*WalTxn
-	baseDir   string
-	prevTxnId atomic.Uint64
+	store             Storage
+	txnsMu            sync.RWMutex
+	txns              map[uint64]*WalTxn
+	baseDir           string
+	lastCommitedTxnId atomic.Uint64
 }
 
 // todo build high level put/del over append
 
 func NewFSWal(client *s3.Client, bucketName, prefix string) *FSWal {
 	// todo: init store interface
-	return &FSWal{baseDir: bucketName, prevTxnId: atomic.Uint64{}}
+	return &FSWal{baseDir: bucketName, lastCommitedTxnId: atomic.Uint64{}}
 }
 
 func (w *FSWal) Append(ctx context.Context, data []byte) (uint64, error) {

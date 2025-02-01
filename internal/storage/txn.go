@@ -3,19 +3,20 @@ package storage
 import (
 	"context"
 	"errors"
-	"sync"
 	"sync/atomic"
 	"time"
 )
 
 type WalTxn struct {
-	wal       *FSWal
-	id        uint64
+	wal *FSWal
+	id  uint64
+
+	beginAt   time.Duration
+	endAt     time.Duration
 	committed atomic.Bool
-	timestamp time.Duration
-	mu        sync.Mutex
-	events    []Event
-	ctx       context.Context
+
+	events []Event
+	ctx    context.Context
 }
 
 var (
@@ -27,18 +28,14 @@ var (
 
 func NewTxn(ctx context.Context, wal *FSWal) *WalTxn {
 	return &WalTxn{
-		wal:       wal,
-		id:        wal.prevTxnId.Add(1),
-		timestamp: time.Duration(time.Now().UnixNano()),
-		events:    make([]Event, 0),
-		ctx:       ctx,
+		wal:    wal,
+		id:     wal.lastCommitedTxnId.Add(1),
+		events: make([]Event, 0),
+		ctx:    ctx,
 	}
 }
 
 func (t *WalTxn) Begin() error {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	t.wal.txnsMu.Lock()
 	defer t.wal.txnsMu.Unlock()
 
@@ -46,14 +43,12 @@ func (t *WalTxn) Begin() error {
 		return ErrTxnAlreadyExists
 	}
 
+	t.beginAt = time.Duration(time.Now().UnixNano())
 	t.wal.txns[t.id] = t
 	return nil
 }
 
 func (t *WalTxn) Get(id uint64) (Entry, error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	// todo: hit local cache
 
 	b, err := t.wal.store.Get(context.Background(), id)
@@ -66,9 +61,6 @@ func (t *WalTxn) Get(id uint64) (Entry, error) {
 }
 
 func (t *WalTxn) Put(id uint64, value []byte) error {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	if t.committed.Load() {
 		return ErrTxnCommitted
 	}
@@ -87,9 +79,6 @@ func (t *WalTxn) Put(id uint64, value []byte) error {
 }
 
 func (t *WalTxn) Delete(id uint64) error {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	if t.committed.Load() {
 		return ErrTxnCommitted
 	}
@@ -108,9 +97,6 @@ func (t *WalTxn) Delete(id uint64) error {
 }
 
 func (t *WalTxn) Commit() error {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	if t.committed.Load() {
 		return ErrTxnCommitted
 	}
@@ -120,7 +106,7 @@ func (t *WalTxn) Commit() error {
 	// Phase 2: Commit
 	// Mark transaction as committed
 	// Cleanup prepare marker
-
+	t.endAt = time.Duration(time.Now().UnixNano())
 	t.committed.Store(true)
 	// delete(t.wal.txns, t.id)
 	return nil
@@ -128,9 +114,6 @@ func (t *WalTxn) Commit() error {
 
 // Rollback undoes all operations in the transaction
 func (t *WalTxn) Rollback() error {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
 	if t.committed.Load() {
 		return ErrTxnCommitted
 	}
