@@ -8,6 +8,47 @@ import (
 	"github.com/hanwen/go-fuse/v2/fuse"
 )
 
+/*
+** API design considerations
+how to map a stateless protocol over a stateful api?
+volume identifier, an inode number, and a generation number
+*/
+
+/*
+// ~stolen~ borrowed from polarFS
+int     pfs_mount(const char *volname, int host_id)
+int     pfs_umount(const char *volname)
+int     pfs_mount_growfs(const char *volname)
+
+int     pfs_creat(const char *volpath, mode_t mode)
+int     pfs_open(const char *volpath, int flags, mode_t mode)
+int     pfs_close(int fd)
+ssize_t pfs_read(int fd, void *buf, size_t len)
+ssize_t pfs_write(int fd, const void *buf, size_t len)
+off_t   pfs_lseek(int fd, off_t offset, int whence)
+ssize_t pfs_pread(int fd, void *buf, size_t len, off_t offset)
+ssize_t pfs_pwrite(int fd, const void *buf, size_t len, off_t offset)
+int     pfs_stat(const char *volpath, struct stat *buf)
+int     pfs_fstat(int fd, struct stat *buf)
+int     pfs_posix_fallocate(int fd, off_t offset, off_t len)
+int     pfs_unlink(const char *volpath)
+int     pfs_rename(const char *oldvolpath, const char *newvolpath)
+int     pfs_truncate(const char *volpath, off_t len)
+int     pfs_ftruncate(int fd, off_t len)
+int     pfs_access(const char *volpath, int amode)
+
+int     pfs_mkdir(const char *volpath, mode_t mode)
+DIR*    pfs_opendir(const char *volpath)
+struct dirent *pfs_readdir(DIR *dir)
+int     pfs_readdir_r(DIR *dir, struct dirent *entry,
+
+	struct dirent **result)
+
+int     pfs_closedir(DIR *dir)
+int     pfs_rmdir(const char *volpath)
+int     pfs_chdir(const char *volpath)
+int     pfs_getcwd(char *buf)
+*/
 var (
 	// syscall access method interfaces
 	_ fs.NodeGetattrer = (*flubberRoot)(nil)
