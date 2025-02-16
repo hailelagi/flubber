@@ -1,0 +1,15 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "panels": [],
+    "refresh": "5s",
+    "style": "dark",
+    "tags": [
+        "pprof",
+        "go"
+    ],
+    "title": "Flubber FUSE filesystem on object storage",
+    "version": 1
+}

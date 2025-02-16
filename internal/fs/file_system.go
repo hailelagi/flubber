@@ -8,6 +8,7 @@ import (
 	"runtime/pprof"
 
 	"github.com/hailelagi/flubber/internal/config"
+	"github.com/hailelagi/flubber/internal/metrics"
 	"github.com/hailelagi/flubber/internal/storage"
 	"github.com/hanwen/go-fuse/v2/fs"
 	"github.com/hanwen/go-fuse/v2/fuse"
@@ -50,6 +51,7 @@ func InitMount(mountpoint string, config *config.Mount) error {
 		zap.L().Fatal("mount failure", zap.Error(err))
 	}
 
+	// todo move this to metrics
 	var profFile, memProfFile io.Writer
 
 	if config.Profile != "" {
@@ -76,7 +78,11 @@ func InitMount(mountpoint string, config *config.Mount) error {
 		defer pprof.StopCPUProfile()
 	}
 
+	// todo:
+	metrics.StartMetricsServer()
+
 	server.Wait()
+
 	if memProfFile != nil {
 		err := pprof.WriteHeapProfile(memProfFile)
 		if err != nil {
