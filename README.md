@@ -1,5 +1,5 @@
 # flubber
-A simple FUSE filesystem built on object storage
+A FUSE filesystem built on object storage
 
 ## Installation
 
