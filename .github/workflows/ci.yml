@@ -47,6 +47,5 @@ jobs:
     - name: Install dependencies
       run: go mod download
 
-    # todo(fix race condition in ci)
-    # - name: Test with the race detector
-    #   run: GOMAXPROCS=1 go test -v -race ./...
+    - name: Test with the race detector
+      run: GOMAXPROCS=1 go test -v -race ./...
