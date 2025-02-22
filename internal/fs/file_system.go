@@ -2,10 +2,6 @@ package fs
 
 import (
 	"context"
-	"io"
-	"os"
-	"runtime"
-	"runtime/pprof"
 
 	"github.com/hailelagi/flubber/internal/config"
 	"github.com/hailelagi/flubber/internal/metrics"
@@ -47,47 +43,15 @@ func InitMount(mountpoint string, config *config.Mount) error {
 	}
 
 	server, err := fs.Mount(mountpoint, root, opts)
+
 	if err != nil {
 		zap.L().Fatal("mount failure", zap.Error(err))
 	}
 
-	// todo move this to metrics
-	var profFile, memProfFile io.Writer
-
-	if config.Profile != "" {
-		profFile, err = os.Create(config.Profile)
-		if err != nil {
-			zap.L().Warn("cannot create cpu profile", zap.Error(err))
-		}
-	}
-	if config.MemProfile != "" {
-		memProfFile, err = os.Create(config.MemProfile)
-		if err != nil {
-			zap.L().Warn("cannot create mem profile", zap.Error(err))
-		}
-	}
-
-	runtime.GC()
-
-	if profFile != nil {
-		err := pprof.StartCPUProfile(profFile)
-
-		if err != nil {
-			zap.L().Info(err.Error())
-		}
-		defer pprof.StopCPUProfile()
-	}
-
-	// todo:
 	metrics.StartMetricsServer()
+	metrics.StartMetricsPprof(config)
 
 	server.Wait()
 
-	if memProfFile != nil {
-		err := pprof.WriteHeapProfile(memProfFile)
-		if err != nil {
-			zap.L().Info(err.Error())
-		}
-	}
 	return nil
 }
