@@ -1,5 +1,8 @@
 package storage
 
+// for a set of n transactions, there exist n factorial (n!) different valid serial schedules.
+// we lean on porcupine to create a model and handle the heavy lifting of figuring out how to explore
+// the state space in a clever way.
 type testWalTxn struct {
 	op    string
 	key   string
